@@ -6,13 +6,17 @@ import jwt from 'jsonwebtoken';
 
 export default class UserController {
     static async register(req, res) {
-        const { username, email, password } = req.body;
+        const { username, email, password, firstName, lastName } = req.body;
 
-        if (!username || !email || !password) return res.status(400).json({ message: 'All fields are required' });
+        if (!username || !email || !password || !firstName || !lastName) return res.status(400).json({ message: 'All fields are required' })
 
         if (password.length < 6) return res.status(400).json({ message: 'Password must be at least 6 characters' });
 
         if (username.length < 3 || username.length > 20) return res.status(400).json({ message: 'Username must be between 3 and 20 characters' });
+
+        if (firstName.length < 2 || firstName.length > 20) return res.status(400).json({ message: 'First name must be between 2 and 20 characters' });
+
+        if (lastName.length < 2 || lastName.length > 20) return res.status(400).json({ message: 'Last name must be between 2 and 20 characters' });
 
         const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         if (!emailRegex.test(email)) return res.status(400).json({ message: 'Invalid email' });
@@ -24,6 +28,8 @@ export default class UserController {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         const user = new User({
+            firstName,
+            lastName,
             username,
             email,
             password: hashedPassword
@@ -32,9 +38,7 @@ export default class UserController {
         try {
             const savedUser = await user.save();
 
-            let { password, ...userWithoutPassword } = savedUser._doc;
-
-            res.status(201).json(userWithoutPassword);
+            res.status(201).json();
         } catch (err) {
             res.status(500).json({ message: err.message });
         }
