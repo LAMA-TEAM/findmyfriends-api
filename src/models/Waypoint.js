@@ -5,10 +5,6 @@ const WaypointSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    description: {
-        type: String,
-        required: true,
-    },
     longitude: {
         type: Number,
         required: true,
@@ -20,7 +16,7 @@ const WaypointSchema = new mongoose.Schema({
     isShared: {
         type: Boolean,
         required: true,
-        default: false,
+        default: true,
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,

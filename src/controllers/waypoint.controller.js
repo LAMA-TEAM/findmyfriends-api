@@ -11,10 +11,10 @@ export default class WaypointController {
     }
 
     static async create(req, res) {
-        const { name, latitude, longitude } = req.body;
+        const { title, latitude, longitude } = req.body;
 
         const waypoint = new Waypoint({
-            name,
+            title,
             latitude,
             longitude,
             user: req.user._id
@@ -24,6 +24,7 @@ export default class WaypointController {
             await waypoint.save();
             res.status(201).json(waypoint);
         } catch (err) {
+            console.log(err);
             res.status(500).json({ message: err.message });
         }
     }
