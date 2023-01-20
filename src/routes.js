@@ -12,6 +12,7 @@ const routes = (app) => {
     app.post('/users/friends', isAuth, UserController.addFriend);
 
     app.get('/invitations', isAuth, InvitationController.getAll);
+    app.post('/invitations', isAuth, InvitationController.create);
     app.get('/invitations/sended', isAuth, InvitationController.sendedInvitations);
     app.post('/invitations/accept/:id', isAuth, InvitationController.accept);
 
