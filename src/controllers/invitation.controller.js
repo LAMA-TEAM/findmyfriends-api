@@ -69,6 +69,11 @@ export default class InvitationController {
 
         if (invitation) return res.status(400).json({ message: 'Invitation already exists' });
 
+        // check if user is already friend
+        const isFriend = req.user.friends.find((friend) => friend.toString() === user._id.toString());
+
+        if (isFriend) return res.status(400).json({ message: 'User is already your friend' });
+
         const newInvitation = new Invitation({
             from: req.user._id,
             to: user._id
