@@ -59,8 +59,6 @@ export default class InvitationController {
     static async create(req, res) {
         const { username } = req.body;
 
-        console.log('creadted')
-
         const user = await User.findOne({ username });
 
         if (!user) return res.status(400).json({ message: 'User does not exist' });

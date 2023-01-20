@@ -1,10 +1,17 @@
 import Waypoint from '../models/Waypoint.js';
+import User from '../models/User.js';
 
 export default class WaypointController {
     static async getAll(req, res) {
         try {
             const waypoints = await Waypoint.find({ user: req.user._id });
-            res.status(200).json(waypoints);
+
+            const user = await User.findById(req.user._id);
+
+            // Get waypoints from friends
+            const friendsWaypoints = await Waypoint.find({ user: { $in: user.friends } });
+            
+            res.status(200).json({ waypoints, friendsWaypoints });
         } catch (err) {
             res.status(500).json({ message: err.message });
         }
