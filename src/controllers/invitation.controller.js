@@ -59,6 +59,8 @@ export default class InvitationController {
     static async create(req, res) {
         const { username } = req.body;
 
+        console.log('creadted')
+
         const user = await User.findOne({ username });
 
         if (!user) return res.status(400).json({ message: 'User does not exist' });
@@ -70,7 +72,8 @@ export default class InvitationController {
         if (invitation) return res.status(400).json({ message: 'Invitation already exists' });
 
         // check if user is already friend
-        const isFriend = req.user.friends.find((friend) => friend.toString() === user._id.toString());
+        const userAsking = await User.findById(req.user._id).populate('friends');
+        const isFriend = userAsking.friends.find(friend => friend._id.toString() === user._id.toString());
 
         if (isFriend) return res.status(400).json({ message: 'User is already your friend' });
 
