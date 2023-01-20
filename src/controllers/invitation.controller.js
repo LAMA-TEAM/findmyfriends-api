@@ -13,7 +13,13 @@ export default class InvitationController {
 
     static async sendedInvitations(req, res) {
         try {
-            const invitations = await Invitation.find({ from: req.user._id, accepted: false }).populate(['from', 'to'], '_id username');
+            const invitations = await Invitation.find({ from: req.user._id, accepted: false }).populate({
+                path: 'to',
+                select: '_id username'
+            }).populate({
+                path: 'from',
+                select: '_id username'
+            });
 
             res.status(200).json(invitations);
         } catch (err) {
