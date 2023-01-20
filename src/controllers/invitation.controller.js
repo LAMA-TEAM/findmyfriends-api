@@ -1,4 +1,5 @@
 import Invitation from "../models/Invitation.js";
+import User from "../models/User.js";
 
 export default class InvitationController {
     static async getAll(req, res) {
@@ -44,6 +45,33 @@ export default class InvitationController {
             await user.save();
             await userWantToAdd.save();
 
+        } catch (err) {
+            res.status(500).json({ message: err.message });
+        }
+    }
+
+    static async create(req, res) {
+        const { username } = req.body;
+
+        const user = await User.findOne({ username });
+
+        if (!user) return res.status(400).json({ message: 'User does not exist' });
+
+        if (user._id.toString() === req.user._id) return res.status(400).json({ message: 'You can not add yourself' });
+
+        const invitation = await Invitation.findOne({ from: req.user._id, to: user._id });
+
+        if (invitation) return res.status(400).json({ message: 'Invitation already exists' });
+
+        const newInvitation = new Invitation({
+            from: req.user._id,
+            to: user._id
+        });
+
+        try {
+            await newInvitation.save();
+
+            res.status(201).json({ message: 'Invitation created' });
         } catch (err) {
             res.status(500).json({ message: err.message });
         }
